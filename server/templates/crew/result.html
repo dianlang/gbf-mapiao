@@ -1,44 +1,32 @@
 {% extends 'layout.html' %}
-{% block title %}{% if name %}{{ r['name'] }}{% elif _id %}crew id:{{ _id }}{% else %}{{ teamraid[8:] }}回古战场预选团名次查询{% endif %}{% endblock %}
+{% block title %}{% if r %}{{ r['name'] }}{% else %}{{ teamraid[8:] }}回古战场预选团名次查询{% endif %}{% endblock %}
 {% block content %}
-    <div class="row">
-        <div class="col-sm text-center">
-            {% if name or _id %}
-                {% if r %}
-                    <ul class="list-group">
-                        <li class="list-group-item"><a target="_blank" href='http://game.granbluefantasy.jp/#guild/detail/{{ r['id'] }}'>{{ r['name']|e }}</a></li>
-                        <li class="list-group-item">预选名次: {{ r['ranking'] }}</li>
-                        <li class="list-group-item">预选分数: {{ r['point'] }}</li>
-                        <li class="list-group-item">骑空团ID: {{ r['id'] }}</li>
-                    </ul>
-                {% endif %}
-            {% else %}
-                <p>{{ teamraid[8:] }}回古战场预选团名次查询</p>
-                <form action="/{{ teamraid }}/crew" method="GET">
-                    <div class="input-group input-group-sm mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">团名</span>
-                        </div>
-                        <label for="name"></label><input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="name" name="name"/>
-                        <div class="input-group-append">
-                            <input type="submit" class="btn btn-success">
-                        </div>
-                    </div>
-                </form>
-                <form action="/{{ teamraid }}/crew" method="GET">
-                    <div class="input-group input-group-sm mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">骑空团ID</span>
-                        </div>
-                        <label for="id"></label><input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"
-                                                       id="id" name="id"/>
-                        <div class="input-group-append">
-                            <input type="submit" class="btn btn-success">
-                        </div>
-                    </div>
-                </form>
-            {% endif %}
-            <a href="/">首页</a>
+    {% if r %}
+        <div class="mdl-grid">
+            <ul class="mdl-list  mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet">
+                <li class="mdl-list__item"><a class="mdl-button mdl-button--raised" target="_blank" href='http://game.granbluefantasy.jp/#guild/detail/{{ r['id'] }}'>{{ r['name']|e }}</a></li>
+                <li class="mdl-list__item">预选名次: {{ r['ranking'] }}</li>
+                <li class="mdl-list__item">预选分数: {{ r['point'] }}</li>
+                <li class="mdl-list__item">骑空团ID: {{ r['id'] }}</li>
+            </ul>
         </div>
-    </div>
+    {% else %}
+        <div class="mdl-grid">
+            {% for field in [{'field':'name','help':'根据骑空团名搜索'},
+                             {'field':'id','help':'根据骑空团ID搜索'}] %}
+
+                <form class=" mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet" action="/{{ teamraid }}/crew" method="GET">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input type="text" class="mdl-textfield__input" aria-label="Small" aria-describedby="inputGroup-sizing-sm"
+                               id="{{ field['field'] }}" name="{{ field['field'] }}"/>
+                        <label class="mdl-textfield__label" for="{{ field['field'] }}">{{ field['field'] }}</label>
+                    </div>
+                    <div class="input-group-append">
+                        <input type="submit" class="mdl-button mdl-button--raised" value="{{ field['help'] }}">
+                    </div>
+                </form>
+
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}

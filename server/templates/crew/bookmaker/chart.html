@@ -1,190 +1,154 @@
-<!DOCTYPE html>
-<html>
+{% extends 'layout.html' %}
 
-<head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>GBF Chart</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#343a40"/>
-</head>
-
-<body>
-<div style="display: none">
-    <script src="https://s19.cnzz.com/z_stat.php?id=1273783067&web_id=1273783067" language="JavaScript"></script>
-</div>
-
-<div class="container">
-    <a href="/">首页</a>
+{% block title %}今日马票{% endblock %}
+{% block content %}
     <div class="card-body">
         <div class="chart_container">
             <canvas id="latestChart" width="1920" height="1080"></canvas>
         </div>
     </div>
-</div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
-        integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.bootcss.com/moment.js/2.22.1/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
-<script>
-  const diffData = {
-    north: [],
-    west: [],
-    east: [],
-    south: []
-  }
-
-  const date = new Date()
-  const dateDate = Number(date.getDate())
-  const titlePrefix = '第38回古戦場'
-
-  const title = titlePrefix + ' '
-
-  function makeRequest (method, url) {
-    return new Promise(function (resolve, reject) {
-      const xhr = new XMLHttpRequest()
-      xhr.open(method, url)
-      xhr.responseType = 'json'
-      xhr.setRequestHeader('Accept', 'application/json')
-      xhr.onload = function () {
-        if (this.readyState === 4 && this.status === 200) {
-          resolve(xhr.response)
-        }
-        else {
-          reject({
-            status: this.status,
-            statusText: xhr.statusText
-          })
-        }
-      }
-      xhr.onerror = function () {
-        reject({
-          status: this.status,
-          statusText: xhr.statusText
-        })
-      }
-      xhr.send()
-    })
-  }
-
-  function maxOfValue (item) {
-    return (item.north + item.west + item.east + item.south) / 4
-  }
-
-  function getLatestData () {
-    makeRequest('GET', "{{ url|safe }}")
-    {#makeRequest('GET', 'https://granbluefantasy.trim21.cn/api/v0.1/bookmaker?start=1527609240&end=1527695640')#}
-      .then(function (value) {
-          let latestData = value.data
-          const originalData = {
-            north: latestData.map(item => item.north - maxOfValue(item)),
-            west: latestData.map(item => item.west - maxOfValue(item)),
-            east: latestData.map(item => item.east - maxOfValue(item)),
-            south: latestData.map(item => item.south - maxOfValue(item))
-          }
-          const timeLabels = latestData.map(item => new Date(item.time * 1000))
-
-          let ctx = document.getElementById('latestChart').getContext('2d')
-          window.myLine = new Chart(
-            ctx,
-            {
-              type: 'line',
-              data: {
-                labels: timeLabels,
-                datasets: [
-                  {
-                    label: 'N',
-                    data: originalData.north,
-                    backgroundColor: 'green',
-                    borderColor: 'green',
-                    fill: false,
-                    showLine: true
-                  },
-                  {
-                    label: 'W',
-                    data: originalData.west,
-                    backgroundColor: 'gray',
-                    borderColor: 'gray',
-                    fill: false,
-                    showLine: true
-                  },
-                  {
-                    label: 'E',
-                    data: originalData.east,
-                    backgroundColor: 'rgb(90, 90, 120)',
-                    borderColor: 'rgb(90, 90, 120)',
-                    fill: false,
-                    showLine: true
-                  },
-                  {
-                    label: 'S',
-                    data: originalData.south,
-                    backgroundColor: 'rgb(124, 57, 45)',
-                    borderColor: 'rgb(124, 57, 45)',
-                    fill: false,
-                    showLine: true
-                  }
-                ]
-              },
-              options: {
-                elements: { point: { radius: 2 } },
-                responsive: true,
-                title: {
-                  display: true,
-                  {#text: new Date().toLocaleDateString() + ' 古战场',#}
-                  text: '2018/5/30' + ' 古战场',
-                  fontSize: 42,
-                  fontColor: 'black',
-                  fontFamily: 'sans-serif'
-                },
-                scales: {
-                  xAxes: [{
-                    type: 'time',
-                    time: {
-                      displayFormats: {
-                        minute: 'HH:mm'
-                      }
-                    }
-                  }],
-                  yAxes: [{
-                    // 刻度是否显示标签, 即Y轴上是否显示文字
-                    scaleLabel: {
-                      display: true,
-                      labelString: 'Diff',
-                      {#fontFamily: 'Montserrat',#}
-                      fontColor: 'black',
-                      fontFamily: 'Arial',
-                    },
-                    ticks: {
-                      callback (label, index, labels) {
-                        const sig = Math.sign(label)
-                        if (!sig)
-                          return '0'
-                        const value = Math.abs(label)
-                        const p = Math.floor(Math.log(value) / Math.LN10)
-                        const n = value * Math.pow(10, -p)
-                        return (sig === -1 ? '-' : '') + n.toString(10) + 'e' + p.toString(10)
-                      }
-                    }
-                  }]
-                }
-              }
+    <script src="https://cdn.bootcss.com/moment.js/2.22.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+    <script>
+      function makeRequest (method, url) {
+        return new Promise(function (resolve, reject) {
+          const xhr = new XMLHttpRequest()
+          xhr.open(method, url)
+          xhr.responseType = 'json'
+          xhr.setRequestHeader('Accept', 'application/json')
+          xhr.onload = function () {
+            if (this.readyState === 4 && this.status === 200) {
+              resolve(xhr.response)
             }
-          )
-        },
-        function (err) {
-          console.error(err.statusText)
+            else {
+              reject({
+                status: this.status,
+                statusText: xhr.statusText
+              })
+            }
+          }
+          xhr.onerror = function () {
+            reject({
+              status: this.status,
+              statusText: xhr.statusText
+            })
+          }
+          xhr.send()
         })
-  }
+      }
 
-  window.onload = function () {
-    getLatestData()
-  }
-</script>
-</body>
+      function maxOfValue (item) {
+        return (item.north + item.west + item.east + item.south) / 4
+      }
 
-</html>
+      function getLatestData () {
+        makeRequest('GET', "{{ url|safe }}")
+        {#makeRequest('GET', 'https://granbluefantasy.trim21.cn/api/v0.1/bookmaker?start=1527609240&end=1527695640')#}
+          .then(function (value) {
+              let latestData = value.data
+              const originalData = {
+                north: latestData.map(item => item.north - maxOfValue(item)),
+                west: latestData.map(item => item.west - maxOfValue(item)),
+                east: latestData.map(item => item.east - maxOfValue(item)),
+                south: latestData.map(item => item.south - maxOfValue(item))
+              }
+              const timeLabels = latestData.map(item => new Date(item.time * 1000))
+
+              let ctx = document.getElementById('latestChart').getContext('2d')
+              window.myLine = new Chart(
+                ctx,
+                {
+                  type: 'line',
+                  data: {
+                    labels: timeLabels,
+                    datasets: [
+                      {
+                        label: 'N',
+                        data: originalData.north,
+                        backgroundColor: 'green',
+                        borderColor: 'green',
+                        fill: false,
+                        showLine: true
+                      },
+                      {
+                        label: 'W',
+                        data: originalData.west,
+                        backgroundColor: 'gray',
+                        borderColor: 'gray',
+                        fill: false,
+                        showLine: true
+                      },
+                      {
+                        label: 'E',
+                        data: originalData.east,
+                        backgroundColor: 'rgb(90, 90, 120)',
+                        borderColor: 'rgb(90, 90, 120)',
+                        fill: false,
+                        showLine: true
+                      },
+                      {
+                        label: 'S',
+                        data: originalData.south,
+                        backgroundColor: 'rgb(124, 57, 45)',
+                        borderColor: 'rgb(124, 57, 45)',
+                        fill: false,
+                        showLine: true
+                      }
+                    ]
+                  },
+                  options: {
+                    elements: { point: { radius: 2 } },
+                    responsive: true,
+                    title: {
+                      display: true,
+                      {#text: new Date().toLocaleDateString() + ' 古战场',#}
+                      text: '2018/5/30' + ' 古战场',
+                      fontSize: 42,
+                      fontColor: 'black',
+                      fontFamily: 'sans-serif'
+                    },
+                    scales: {
+                      xAxes: [{
+                        type: 'time',
+                        time: {
+                          displayFormats: {
+                            minute: 'HH:mm'
+                          }
+                        }
+                      }],
+                      yAxes: [{
+                        // 刻度是否显示标签, 即Y轴上是否显示文字
+                        scaleLabel: {
+                          display: true,
+                          labelString: 'Diff',
+                          {#fontFamily: 'Montserrat',#}
+                          fontColor: 'black',
+                          fontFamily: 'Arial',
+                        },
+                        ticks: {
+                          callback (label, index, labels) {
+                            const sig = Math.sign(label)
+                            if (!sig)
+                              return '0'
+                            const value = Math.abs(label)
+                            const p = Math.floor(Math.log(value) / Math.LN10)
+                            const n = value * Math.pow(10, -p)
+                            return (sig === -1 ? '-' : '') + n.toString(10) + 'e' + p.toString(10)
+                          }
+                        }
+                      }]
+                    }
+                  }
+                }
+              )
+            },
+            function (err) {
+              console.error(err.statusText)
+            })
+      }
+
+      window.onload = function () {
+        getLatestData()
+      }
+    </script>
+{% endblock %}

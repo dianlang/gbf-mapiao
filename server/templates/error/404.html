@@ -1,14 +1,16 @@
 {% extends 'layout.html' %}
 {% block title %}古战场数据{% endblock %}
 {% block content %}
-    <div class="col-sm text-center">
+    <div class="mdl-grid">
         {% if error %}
             {{ error }}
         {% else %}
             啥也没找到
         {% endif %}
-        <button class="btn" onclick="goBack()">返回</button>
-        <a class="btn" href="/">首页</a>
+    </div>
+    <div class="mdl-grid">
+        <button class="mdl-button mdl-button--raised" onclick="goBack()">返回</button>
+        {#        <a class="mdl-button mdl-button--raised" href="/">首页</a>#}
     </div>
 
     <script>
