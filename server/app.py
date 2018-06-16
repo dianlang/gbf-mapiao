@@ -20,22 +20,21 @@ async def error_middleware(request: web.Request, handler):
     try:
         response = await handler(request)
         if request.path.startswith('/api/'):
-            if 'html' in request.headers.get('accept'):
+            if 'html' in request.headers.get('accept', ''):
                 response.text = json.dumps(json.loads(response.text), ensure_ascii=False, indent=2)
         return response
     except web.HTTPError as e:
         status = e.status_code
         message = e.reason
         if request.path.startswith('/api/'):
-            if 'html' in request.headers.get('accept'):
-                return web.Response(text=json.dumps({'error': message, 'status_code': status},
-                                                    ensure_ascii=False, indent=2),
-                                    status=status)
-
-        # if 'html' in request.headers.get('accept'):
+            if 'html' in request.headers.get('accept', ''):
+                indent = 2
+            else:
+                indent = 0
+            return web.Response(text=json.dumps({'error': message, 'status_code': status},
+                                                ensure_ascii=False, indent=indent),
+                                status=status)
         return aiohttp_jinja2.render_template('error/404.html', request, {'error': message, })
-        # else:
-        #     return web.json_response({'error': message, 'status_code': status}, status=status)
 
 
 def _raise(exception: Exception):

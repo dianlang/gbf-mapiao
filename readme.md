@@ -19,6 +19,18 @@ pprint.pprint(r.json())
 
 start_time and end_time should be standard unix timestamp.
 
+## get individual rank history data
+
+```python
+import requests
+import pprint
+
+user_id = 'id you want to search'
+r = requests.get('https://granbluefantasy.trim21.cn/api/v0.1/teamraid038/individual', {'user_id': user_id})
+pprint.pprint(r.json())
+```
+
+
 ## Cron
 
 you need to install `pypiwin32` when you try to get cookies from Chrome on windows.

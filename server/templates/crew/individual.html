@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 
-{% block title %}今日马票{% endblock %}
+{% block title %}古战场个排{% endblock %}
 {% block content %}
     {% if user_id %}
 
@@ -52,7 +52,6 @@
                   const yData = keys.map(item => data[item].point)
 
                   let ctx = document.getElementById('latestChart').getContext('2d')
-
                   window.myLine = new Chart(
                     ctx,
                     {
@@ -111,6 +110,7 @@
                 },
                 function (err) {
                   console.error(err.statusText)
+                  alert(err.statusText)
                 })
           }
 

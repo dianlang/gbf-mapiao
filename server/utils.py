@@ -79,7 +79,6 @@ def check_and_covert_input(request: aiohttp.web.Request, fields: Union[List[Dict
                 except ValueError:
                     raise ValueError("Invalid input {}, can't be {}".format(field['name'], value))
             else:
-                print(field['name'])
                 value = field.get('type', str)(field['default'])
             data[field['name']] = value
     return data

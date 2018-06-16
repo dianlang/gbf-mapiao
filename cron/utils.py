@@ -22,8 +22,6 @@ def initSession():
                        [line for line in headerString.format(version=getXVersion()).splitlines() if line]]
                       if len(line) == 2 and line[0] != 'Cookie'}
     s = requests.Session()
-    # print(defaultCookies)
-    # print(defaultHeaders)
     s.proxies.update(proxies)
     s.cookies.update(defaultCookies)
     s.headers.update(defaultHeaders)
