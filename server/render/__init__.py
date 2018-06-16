@@ -4,6 +4,7 @@ import aiohttp_jinja2
 import pytz
 from aiohttp import web
 from db import mongo
+from utils import check_and_covert_input, MissingInputException
 
 
 @aiohttp_jinja2.template('crew/bookmaker/chart.html')
@@ -39,7 +40,35 @@ async def teamRaidCrewHandle(request: aiohttp.web.Request, ):
     return {'r': r, 'teamraid': teamraid}
 
 
+@aiohttp_jinja2.template('crew/individual.html')
+async def teamRaidIndividualHandle(request: aiohttp.web.Request, ):
+    try:
+        teamraid = check_and_covert_input(request, {'name'    : 'teamraid',
+                                                    'type'    : str,
+                                                    'required': True}, 'match_info')['teamraid']
+
+    except MissingInputException as e:
+        return web.json_response({
+            'status' : 'error',
+            'message': str(e),
+        }, status=400)
+
+    except ValueError as e:
+        return web.json_response({
+            'status' : 'error',
+            'message': str(e),
+        }, status=400)
+
+    if teamraid not in ['teamraid038', 'teamraid039']:
+        raise web.HTTPNotFound(reason='古战id错误')
+    if teamraid == 'teamraid039':
+        raise web.HTTPNotFound(reason='尚未录入数据')
+
+    return {'user_id': request.query.get('user_id', None), 'teamraid': teamraid}
+
+
 routes = [
     web.get('/render/bookmaker/today', bookmakerTodayHanle),
-    web.get('/render/{teamraid}/crew', teamRaidCrewHandle)
+    web.get('/render/{teamraid}/crew', teamRaidCrewHandle),
+    web.get('/render/{teamraid}/individual', teamRaidIndividualHandle),
 ]

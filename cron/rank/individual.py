@@ -30,6 +30,7 @@ def main():
             c = db.get_collection('individual')
             for item in res['list'].values():
                 item['time'] = now
+                item['point'] = int(item['point'])
             c.insert_many(res['list'].values())
         except:
             print(r.text)

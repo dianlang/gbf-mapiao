@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Union
 
 import aiohttp
 from aiohttp import web
@@ -8,7 +8,7 @@ class MissingInputException(Exception):
     pass
 
 
-def check_and_covert_input(request: aiohttp.web.Request, fields: List[Dict], source: str) -> Dict:
+def check_and_covert_input(request: aiohttp.web.Request, fields: Union[List[Dict], Dict], source: str) -> Dict:
     r"""check input and convert them to requested type
 
         Several sentences providing an extended description. Refer to
@@ -19,7 +19,7 @@ def check_and_covert_input(request: aiohttp.web.Request, fields: List[Dict], sou
         ----------
         request : aiohttp.web.Request
             given request by aiohttp
-        fields : List[Dict]
+        fields : Union[List[Dict], Dict]
             dict must have this keys: `name`, `type`, `required`.
 
              If `required` is `false`, you must give a `default`.
@@ -60,7 +60,8 @@ def check_and_covert_input(request: aiohttp.web.Request, fields: List[Dict], sou
         """
     data = {}
     missing_fields = []
-
+    if isinstance(fields, dict):
+        fields = [fields, ]
     for field in fields:
         if field['required']:
             if not field['name'] in getattr(request, source):
@@ -72,7 +73,7 @@ def check_and_covert_input(request: aiohttp.web.Request, fields: List[Dict], sou
         for field in fields:
             # if field is required, default value is useless
             value = getattr(request, source).get(field['name'])
-            if not value is None:
+            if value is not None:
                 try:
                     value = field.get('type', str)(value)
                 except ValueError:

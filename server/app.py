@@ -19,22 +19,31 @@ base_dir = pathlib.Path(path.dirname(__file__))
 async def error_middleware(request: web.Request, handler):
     try:
         response = await handler(request)
+        if request.path.startswith('/api/'):
+            if 'html' in request.headers.get('accept'):
+                response.text = json.dumps(json.loads(response.text), ensure_ascii=False, indent=2)
         return response
     except web.HTTPError as e:
         status = e.status_code
         message = e.reason
-        if 'html' in request.headers.get('accept'):
-            return aiohttp_jinja2.render_template('error/404.html', request, {'error': message, })
-        else:
-            return web.json_response({'error': message, 'status_code': status}, status=status)
+        if request.path.startswith('/api/'):
+            if 'html' in request.headers.get('accept'):
+                return web.Response(text=json.dumps({'error': message, 'status_code': status},
+                                                    ensure_ascii=False, indent=2),
+                                    status=status)
+
+        # if 'html' in request.headers.get('accept'):
+        return aiohttp_jinja2.render_template('error/404.html', request, {'error': message, })
+        # else:
+        #     return web.json_response({'error': message, 'status_code': status}, status=status)
 
 
-def _raise(excep):
-    raise excep
+def _raise(exception: Exception):
+    raise exception
 
 
-def create_app(loop=None):
-    app = web.Application(loop=loop, middlewares=[error_middleware, ])
+def create_app(io_loop=None):
+    app = web.Application(loop=io_loop, middlewares=[error_middleware, ])
     app.mongo = mongo
     aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader(str(base_dir / 'templates')))
     app.add_routes([
@@ -50,4 +59,4 @@ def create_app(loop=None):
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    web.run_app(create_app(loop=loop), port=6001)
+    web.run_app(create_app(io_loop=loop), port=6001)
