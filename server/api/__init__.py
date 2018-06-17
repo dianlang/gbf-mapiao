@@ -9,7 +9,8 @@ from utils import MissingInputException, check_and_covert_input
 async def bookmakerRaidHandle(request: web.Request, ):
     mongo = request.app.mongo
     fields = [
-        {'name': 'user_id', 'type': int, 'required': True, },
+        {'name': 'start', 'type': int, 'required': True, },
+        {'name': 'end', 'type': int, 'required': False, 'default': int(time.time())}
     ]
     try:
         data = check_and_covert_input(request, fields, 'query')
@@ -23,7 +24,6 @@ async def bookmakerRaidHandle(request: web.Request, ):
             'status' : 'error',
             'message': str(e),
         }, status=400)
-
     start: int = data['start']
     end: int = data['end']
     print(start, end)
@@ -62,7 +62,7 @@ async def teamraidIndividualRank(request: web.Request, ):
         }, status=400)
     _id: int = data['user_id']
     collection = mongo.get_database('gbf').get_collection('{}_individual'.format(teamraid))  # type: motor.motor_asyncio.AsyncIOMotorCollection
-    r = await collection.find_one({'_id': _id}, {'_id': 0, "times": 0})
+    r = await collection.find_one({'_id': _id}, {'_id': 0})
     if r:
         return web.json_response({
             'status': 'success',

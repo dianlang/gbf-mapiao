@@ -30,7 +30,6 @@ r = requests.get('https://granbluefantasy.trim21.cn/api/v0.1/teamraid038/individ
 pprint.pprint(r.json())
 ```
 
-
 ## Cron
 
 you need to install `pypiwin32` when you try to get cookies from Chrome on windows.
@@ -38,3 +37,7 @@ you need to install `pypiwin32` when you try to get cookies from Chrome on windo
 `cron/rank/individual.py` is an example for fetching individual rank.
 
 `cron/bookmaker.py` is an example for fetching bookmaker data.
+
+## About data
+
+If you just want to get all data, just Email [trim21me@hotmail.com](mailto:trim21me@hotmail.com). Do not crawl from api.

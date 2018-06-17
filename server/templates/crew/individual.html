@@ -78,7 +78,15 @@
                             type: 'time',
                             time: {
                               displayFormats: {
-                                minute: 'HH:mm'
+                                'millisecond': 'DD HH:mm',
+                                'second': 'DD HH:mm',
+                                'minute': 'DD HH:mm',
+                                'hour': 'DD HH:mm',
+                                'day': 'DD HH:mm',
+                                'week': 'DD',
+                                'month': 'DD',
+                                'quarter': 'DD',
+                                'year': 'DD',
                               }
                             }
                           }],
@@ -86,8 +94,7 @@
                             // 刻度是否显示标签, 即Y轴上是否显示文字
                             scaleLabel: {
                               display: true,
-                              labelString: 'Diff',
-                              {#fontFamily: 'Montserrat',#}
+                              labelString: 'Point',
                               fontColor: 'black',
                               fontFamily: 'Arial',
                             },
@@ -103,6 +110,15 @@
                               }
                             }
                           }]
+                        },
+                        tooltips: {
+                          callbacks: {
+                            label: function (tooltipItem, data) {
+                              return Number(tooltipItem.yLabel).toFixed(0).replace(/./g, function (c, i, a) {
+                                return i > 0 && c !== '.' && (a.length - i) % 4 === 0 ? ',' + c : c
+                              })
+                            }
+                          }
                         }
                       }
                     }
@@ -110,7 +126,7 @@
                 },
                 function (err) {
                   console.error(err.statusText)
-                  alert(err.statusText)
+                  alert('没有数据')
                 })
           }
 
