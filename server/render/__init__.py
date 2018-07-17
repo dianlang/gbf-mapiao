@@ -3,7 +3,6 @@ import aiohttp.web
 import aiohttp_jinja2
 import pytz
 from aiohttp import web
-from db import mongo
 from utils import check_and_covert_input, MissingInputException
 
 
@@ -42,17 +41,20 @@ async def teamRaidCrewHandle(request: aiohttp.web.Request, ):
 
 @aiohttp_jinja2.template('crew/individual.html')
 async def teamRaidIndividualHandle(request: aiohttp.web.Request, ):
+    fields = [
+        {'name': 'user_id', 'type': int, 'required': False, },
+        {'name': 'rank', 'type': int, 'required': False, },
+    ]
     try:
-        teamraid = check_and_covert_input(request, {'name'    : 'teamraid',
-                                                    'type'    : str,
-                                                    'required': True}, 'match_info')['teamraid']
-
+        data = check_and_covert_input(request, fields, 'query')
+        teamraid = check_and_covert_input(request,
+                                          {'name': 'teamraid', 'type': str, 'required': True},
+                                          'match_info')['teamraid']
     except MissingInputException as e:
         return web.json_response({
             'status' : 'error',
             'message': str(e),
         }, status=400)
-
     except ValueError as e:
         return web.json_response({
             'status' : 'error',
@@ -61,10 +63,15 @@ async def teamRaidIndividualHandle(request: aiohttp.web.Request, ):
 
     if teamraid not in ['teamraid038', 'teamraid039']:
         raise web.HTTPNotFound(reason='古战id错误')
-    if teamraid == 'teamraid039':
-        raise web.HTTPNotFound(reason='尚未录入数据')
 
-    return {'user_id': request.query.get('user_id', None), 'teamraid': teamraid}
+    user_id: int = data.get('user_id', None)
+    rank: int = data.get('rank', None)
+
+    if user_id:
+        return {'query': {'user_id': user_id}, 'teamraid': teamraid}
+    if rank:
+        return {'query': {'rank': rank}, 'teamraid': teamraid}
+    return {'query': False, 'teamraid': teamraid}
 
 
 routes = [

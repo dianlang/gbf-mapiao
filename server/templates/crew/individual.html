@@ -2,7 +2,7 @@
 
 {% block title %}古战场个排{% endblock %}
 {% block content %}
-    {% if user_id %}
+    {% if query %}
 
         <div class="card-body">
             <div class="chart_container">
@@ -40,7 +40,7 @@
           }
 
           function getLatestData () {
-            makeRequest('GET', "{{ url('teamraid_individual', teamraid=teamraid, query_={'user_id': user_id})|safe }}")
+            makeRequest('GET', "{{ url('teamraid_individual', teamraid=teamraid, query_=query)|safe }}")
               .then(function (value) {
                   let data = value.data
                   let keys = Object.keys(data)
@@ -147,7 +147,17 @@
                     <input type="submit" class="mdl-button mdl-button--raised" value="根据id搜索个排情况">
                 </div>
             </form>
-
+            <form class=" mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet" action="/render/{{ teamraid }}/individual" method="GET">
+                <div>1000 30000 50000 70000 120000</div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input type="text" class="mdl-textfield__input" aria-label="Small" aria-describedby="inputGroup-sizing-sm"
+                           id="rank" name="rank"/>
+                    <label class="mdl-textfield__label" for="rank">Rank</label>
+                </div>
+                <div class="input-group-append">
+                    <input type="submit" class="mdl-button mdl-button--raised" value="搜索rank档分数线">
+                </div>
+            </form>
         </div>
     {% endif %}
 {% endblock %}

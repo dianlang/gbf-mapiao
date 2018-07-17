@@ -2,11 +2,14 @@ import asyncio
 import json
 import pathlib
 from os import path
+from typing import List
 
 import aiohttp
 import aiohttp_jinja2
 import jinja2
 from aiohttp import web
+from aiohttp.web_urldispatcher import Resource
+
 from db import mongo
 
 from api import routes as apiRoutes
@@ -44,12 +47,17 @@ def _raise(exception: Exception):
 def create_app(io_loop=None):
     app = web.Application(loop=io_loop, middlewares=[error_middleware, ])
     app.mongo = mongo
-    aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader(str(base_dir / 'templates')))
+    aiohttp_jinja2.setup(app,
+                         loader=jinja2.FileSystemLoader(str(base_dir / 'templates')),
+                         enable_async=False,
+
+                         )
     app.add_routes([
-        web.get('/robots.txt', lambda x: web.Response(text='User-agent: *\nDisallow: /teamraid038/crew/')),
         web.get('/', lambda request: aiohttp_jinja2.render_template('index.html', request, {})),
+        web.get('/robots.txt', lambda x: web.Response(text='User-agent: *\nDisallow: /teamraid038/crew/')),
         web.get('/teamraid038/crew', lambda request: _raise(web.HTTPFound('/render' + request.path_qs))),
     ])
+    # r = app.router._resources  # type: List[Resource]
     app.add_routes(renderRoutes)
     app.add_routes(apiRoutes)
     print('create app', flush=True)

@@ -43,7 +43,8 @@ async def bookmakerRaidHandle(request: web.Request, ):
 async def teamraidIndividualRank(request: web.Request, ):
     mongo = request.app.mongo  # type: motor.motor_asyncio.AsyncIOMotorClient
     fields = [
-        {'name': 'user_id', 'type': int, 'required': True, },
+        {'name': 'user_id', 'type': int, 'required': False, },
+        {'name': 'rank', 'type': int, 'required': False, },
     ]
     try:
         data = check_and_covert_input(request, fields, 'query')
@@ -60,9 +61,15 @@ async def teamraidIndividualRank(request: web.Request, ):
             'status' : 'error',
             'message': str(e),
         }, status=400)
-    _id: int = data['user_id']
+    _id: int = data.get('user_id', None)
+    rank: int = data.get('rank', None)
     collection = mongo.get_database('gbf').get_collection('{}_individual'.format(teamraid))  # type: motor.motor_asyncio.AsyncIOMotorCollection
-    r = await collection.find_one({'_id': _id}, {'_id': 0})
+
+    r = None
+    if _id:
+        r = await collection.find_one({'_id': _id}, {'_id': 0})
+    if rank:
+        r = await collection.find_one({'_id': 'rank_{}'.format(rank)}, {'_id': 0})
     if r:
         return web.json_response({
             'status': 'success',
