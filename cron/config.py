@@ -22,4 +22,4 @@ mongo = {
 }
 if env == 'local':
     proxies = {'http': 'http://127.0.0.1:8123'}
-    profile = 'Profile 2'
+    # profile = 'Profile 2'

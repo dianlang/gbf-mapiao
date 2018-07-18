@@ -15,7 +15,7 @@
             {% for field in [{'field':'name','help':'根据骑空团名搜索'},
                              {'field':'id','help':'根据骑空团ID搜索'}] %}
 
-                <form class=" mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet" action="/{{ teamraid }}/crew" method="GET">
+                <form class=" mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet" action="/render/{{ teamraid }}/crew" method="GET">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                         <input type="text" class="mdl-textfield__input" aria-label="Small" aria-describedby="inputGroup-sizing-sm"
                                id="{{ field['field'] }}" name="{{ field['field'] }}"/>

@@ -23,8 +23,6 @@ async def teamRaidCrewHandle(request: aiohttp.web.Request, ):
     teamraid = request.match_info.get('teamraid', None)
     if teamraid not in ['teamraid038', 'teamraid039']:
         raise web.HTTPNotFound(reason='古战id错误')
-    if teamraid == 'teamraid039':
-        raise web.HTTPNotFound(reason='尚未录入数据')
     if name or _id:
         con = {}
         if name:

@@ -83,7 +83,51 @@ async def teamraidIndividualRank(request: web.Request, ):
         raise web.HTTPNotFound(content_type='application/json')
 
 
+async def teamraidIndividualRankV2(request: web.Request, ):
+    mongo = request.app.mongo  # type: motor.motor_asyncio.AsyncIOMotorClient
+    fields = [
+        {'name': 'user_id', 'type': int, 'required': True, },
+        {'name': 'start', 'type': int, 'required': True, },
+        {'name': 'end', 'type': int, 'required': True, },
+    ]
+    try:
+        data = check_and_covert_input(request, fields, 'query')
+        teamraid = check_and_covert_input(request,
+                                          {'name': 'teamraid', 'type': str, 'required': True},
+                                          'match_info')['teamraid']
+    except MissingInputException as e:
+        return web.json_response({
+            'status' : 'error',
+            'message': str(e),
+        }, status=400)
+    except ValueError as e:
+        return web.json_response({
+            'status' : 'error',
+            'message': str(e),
+        }, status=400)
+    user_id: int = data['user_id']
+    print(user_id)
+    start: int = data['start']
+    end: int = data['end']
+    collection = mongo.get_database('gbf').get_collection('{}_individual'.format(teamraid))  # type: motor.motor_asyncio.AsyncIOMotorCollection
+    r = await collection.find_one({'_id': user_id}, {'_id': 0})
+    if r:
+        if r:
+            return web.json_response({
+                'status': 'success',
+                'type'  : 'object',
+                'data'  : {key: value for key, value in r.get("history", {}).items() if start < int(key) < end}
+            }, headers={
+                'Access-Control-Allow-Origin' : '*',
+                'Access-Control-Allow-Methods': 'GET',
+            })
+    else:
+        raise web.HTTPNotFound(content_type='application/json')
+
+
+
 routes = [
     web.get('/api/v0.1/bookmaker', bookmakerRaidHandle),
-    web.get('/api/v0.1/{teamraid}/individual', teamraidIndividualRank, name='teamraid_individual')
+    web.get('/api/v0.1/{teamraid}/individual', teamraidIndividualRank, name='teamraid_individual'),
+    web.get('/api/v0.2/{teamraid}/individual', teamraidIndividualRankV2, name='teamraid_individual_v2'),
 ]
