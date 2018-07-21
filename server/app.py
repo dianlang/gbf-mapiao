@@ -49,7 +49,6 @@ def create_app(io_loop=None):
     app.mongo = mongo
     aiohttp_jinja2.setup(app,
                          loader=jinja2.FileSystemLoader(str(base_dir / 'templates')),
-                         enable_async=True,
                          cache_size=400,
                          )
     app.add_routes([

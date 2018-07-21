@@ -27,8 +27,6 @@ def main():
     c = db.get_collection('{}_individual'.format(teamraid))
     for r in results:
         try:
-            print(r.headers)
-
             res = r.json()
             for item in res['list'].values():
                 item['time'] = now

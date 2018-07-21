@@ -25,9 +25,9 @@ import html.parser
 
 def main():
     s = initSession()
-    urls = ['http://game.granbluefantasy.jp/{teamraid}/ranking_guild/detail/{index}/0'.format(teamraid=teamraid, index=index) for index in range(1, 2017)]
+    urls = ['http://game.granbluefantasy.jp/{teamraid}/ranking_guild/detail/{index}/0'.format(teamraid=teamraid, index=index) for index in range(1, 600)]
     rs = (grequests.get(u, session=s, stream=False) for u in urls)
-    results = grequests.map(rs, size=40)
+    results = grequests.map(rs, size=8)
     now = int(time.time())
     c = db.get_collection(teamraid)
     for r in results:

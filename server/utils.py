@@ -85,3 +85,33 @@ def check_and_covert_input(request: aiohttp.web.Request, fields: Union[List[Dict
                     value = None
             data[field['name']] = value
     return data
+
+
+def match_info_from_dict(source_data: Dict, fields: Union[List[Dict], Dict]) -> Dict:
+    data = {}
+    missing_fields = []
+    if isinstance(fields, dict):
+        fields = [fields, ]
+    for field in fields:
+        if field['required']:
+            if not field['name'] in source_data:
+                missing_fields.append(field['name'])
+
+    if missing_fields:
+        raise MissingInputException('missing {}'.format(', '.join(missing_fields)))
+    else:
+        for field in fields:
+            # if field is required, default value is useless
+            value = source_data.get(field['name'])
+            if value is not None:
+                try:
+                    value = field.get('type', str)(value)
+                except ValueError:
+                    raise ValueError("Invalid input {}, can't be {}".format(field['name'], value))
+            else:
+                if 'default' in field:
+                    value = field.get('type', str)(field['default'])
+                else:
+                    value = None
+            data[field['name']] = value
+    return data

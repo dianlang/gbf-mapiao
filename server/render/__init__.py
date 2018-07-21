@@ -8,8 +8,9 @@ from utils import check_and_covert_input, MissingInputException
 
 @aiohttp_jinja2.template('crew/bookmaker/chart.html')
 async def bookmakerTodayHanle(request: aiohttp.web.Request, ):
-    # today = datetime.datetime.today()
-    start = datetime.datetime(2018, 5, 30, tzinfo=pytz.timezone('Asia/Shanghai'))
+    today = datetime.datetime.today()
+    # start = datetime.datetime(2018, 5, 30, tzinfo=pytz.timezone('Asia/Shanghai'))
+    start = datetime.datetime(today.year, today.month, today.day, 6, 0, 0, tzinfo=pytz.timezone('Asia/Shanghai'))
     end = start + datetime.timedelta(hours=24)
     url = '/api/v0.1/bookmaker?start={start}&end={end}' \
         .format(start=int(start.timestamp()), end=int(end.timestamp()))
