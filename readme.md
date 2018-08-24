@@ -52,10 +52,10 @@ you need to install `pypiwin32` when you try to get cookies from Chrome on windo
 
 请确保使用的profile看(skip)过了第一次点进马票的剧情, 不然会导致无法抓取马票数据.
 
-常识运行`cron/bookmaker.py`, 会根据对应设置的profile在`cron`文件夹下生成`cron/cookie.json`, 如果
+尝试运行`python cron/bookmaker.py`, 会根据对应设置的profile在`cron`文件夹下生成`cron/cookie.json`, 如果
  如果成功抓取到了数据存入数据库, 把cron文件夹复制到服务器上, 设置对应的crontab让其抓取数据.
 
- server文件夹不需要做修改(如果你的mongodb是运行在默认端口上), 安装好依赖后直接`python3 app.py`启动服务器, 默认会运行在6001端口.
+ server文件夹不需要做修改(如果你的mongodb是运行在默认端口上), 安装好依赖后直接`python app.py`启动服务器, 默认会运行在6001端口.
 
 
 ## About data
