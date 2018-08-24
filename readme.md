@@ -38,11 +38,24 @@ you need to install `pypiwin32` when you try to get cookies from Chrome on windo
 
 `cron/bookmaker.py` is an example for fetching bookmaker data.
 
+## Deploy
+
+首先安装 
+- python >= 3.6.5
+- mongodb on default port
+
+启动mongodb, 进入项目路径后`pip install -r requirements.txt`, 安装完所有的依赖.
+
+整个项目分为两部分, server和cron
+
+请先把项目clone到本地, 安装`pywin32`, 修改`cron/config.py`中的`profile`指定你要使用的对应的chrome的profile, 修改 `cron/vars.py`中的`teamraid`变量 , 比如2018年8月24号这次团战是 `'teamraid040'` 这个值会出现在古战场首页的网页链接中.
+
+常识运行`cron/bookmaker.py`, 会根据对应设置的profile在`cron`文件夹下生成`cron/cookie.json`, 如果
+ 如果成功抓取到了数据存入数据库, 把cron文件夹复制到服务器上, 设置对应的crontab让其抓取数据.
+
+ server文件夹不需要做修改(如果你的mongodb是运行在默认端口上), 安装好依赖后直接`python3 app.py`启动服务器, 默认会运行在6001端口.
+
+
 ## About data
 
 If you just want to get all data, just Email [trim21me@hotmail.com](mailto:trim21me@hotmail.com). Do not crawl from api.
-
-
-"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256:TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384:TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA:TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA:TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256:TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384:TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256:TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384:TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA:TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA:TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256:TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384:TLS_DHE_RSA_WITH_AES_128_GCM_SHA256:TLS_DHE_RSA_WITH_AES_256_GCM_SHA384:TLS_DHE_RSA_WITH_AES_128_CBC_SHA:TLS_DHE_RSA_WITH_AES_256_CBC_SHA:TLS_DHE_RSA_WITH_AES_128_CBC_SHA256:TLS_DHE_RSA_WITH_AES_256_CBC_SHA256"
-
-ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-SHA256:ECDHE-ECDSA-AES256-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384
