@@ -48,7 +48,9 @@ you need to install `pypiwin32` when you try to get cookies from Chrome on windo
 
 整个项目分为两部分, server和cron
 
-请先把项目clone到本地, 安装`pywin32`, 修改`cron/config.py`中的`profile`指定你要使用的对应的chrome的profile, 修改 `cron/vars.py`中的`teamraid`变量 , 比如2018年8月24号这次团战是 `'teamraid040'` 这个值会出现在古战场首页的网页链接中.
+请先把项目clone到本地, 安装`pywin32`, 修改`cron/config.py`中的`profile`指定你要使用的对应的chrome的profile, 修改 `cron/vars.py`中的`teamraid`变量 , 比如2018年8月24号这次团战是 `teamraid040` 这个值会出现在古战场首页的网页链接中.
+
+请确保使用的profile看(skip)过了第一次点进马票的剧情, 不然会导致无法抓取马票数据.
 
 常识运行`cron/bookmaker.py`, 会根据对应设置的profile在`cron`文件夹下生成`cron/cookie.json`, 如果
  如果成功抓取到了数据存入数据库, 把cron文件夹复制到服务器上, 设置对应的crontab让其抓取数据.
